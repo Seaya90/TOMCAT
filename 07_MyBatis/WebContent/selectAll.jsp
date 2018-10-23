@@ -1,0 +1,65 @@
+<%@page import="com.study.mybatis.MemberVO"%>
+<%@page import="java.util.List"%>
+<%@page import="org.apache.ibatis.session.SqlSession"%>
+<%@page import="com.study.mybatis.DBService"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>전체 목록 조회</title>
+</head>
+<body>
+	<jsp:include page="main.jsp"/>
+	
+	<h1>전체 데이타 조회</h1>
+<%--
+	//DB의 member2테이블에서 전체 데이타 조회
+	openSession(), openSession(false) : Auto Commit 상태 아님
+		- Select문이거나 트랜잭션을 실행할 때 Auto Commit 상태 아님
+		- Insert, Update, Delete 실행하고 commit 처리를 해야 
+		  DB에 최종 반영됨
+	openSession(true) : Auto Commit 상태
+	
+	//------------------------
+	//mapper에 정의되어 있는 id명을 찾아 해당 SQL문을 실행하고 결과 리턴
+	SqlSession.selectOne(mapper의 id명) : select결과가 하나인 경우(0, 1개)
+	SqlSession.selectList(mapper의 id명) : select결과가 여러개인 경우(0, n개)
+--%>
+<%	
+	//SqlSession 객체를 얻기(Auto commit 아님)
+	SqlSession ss = DBService.getFactory().openSession();
+	
+	//데이타 가져오기
+	//mapper의 네임스페이스.아이디명
+	List<MemberVO> memberList = ss.selectList("member2.selectAll");
+	//System.out.println("memberList: " + memberList);
+	ss.close();
+	
+	//데이타 출력 UL 태그로 작성
+	out.println("<ul>");
+	for (MemberVO vo : memberList) {
+		out.println("<li>");
+		out.print(vo.getIdx() + ", ");
+		out.print(vo.getId() + ", ");
+		out.print(vo.getPwd() + ", ");
+		out.print(vo.getName() + ", ");
+		out.print(vo.getAge() + ", ");
+		out.print(vo.getAddress() + ", ");
+		out.print(vo.getReg() + ", ");
+		out.print(vo.getReg().substring(0, 10));
+		
+		out.println("</li>");
+	}
+	out.println("</ul>");
+%>
+</body>
+</html>
+
+
+
+
+
+
+
